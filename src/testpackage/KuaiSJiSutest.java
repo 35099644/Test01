@@ -25,6 +25,9 @@ public class KuaiSJiSutest extends UiAutomatorTestCase {
     /*app 名字*/
     private String appName = "快手极速版";
 
+    public enum TYPE {
+        CLEAR_APP, Error_Base,
+    }
 
     private int errorCount = 0;//记录异常强制启动次数  超过10次就关闭应用
 
@@ -41,11 +44,12 @@ public class KuaiSJiSutest extends UiAutomatorTestCase {
         int count = 0;
         try {
 
-            baseMethod(uiDevice, 0);//启动时  先关闭其他的
+            baseMethod(uiDevice, TYPE.CLEAR_APP.ordinal());//启动时  先关闭其他的
 
             while (true) {
 
 //                LogUtil.e("我运行了" + (count++));
+                Thread.sleep(1000);
 
                 //首页
                 UiObject uiHome = new UiObject(new UiSelector().resourceId("com.kuaishou.nebula:id/left_btn"));
@@ -71,6 +75,7 @@ public class KuaiSJiSutest extends UiAutomatorTestCase {
                         if (uiFollow.exists()) uiFollow.click();
                     }
 
+
                     /*处理异常情况*/
                     UiObject uiCloseBtn = new UiObject(new UiSelector().resourceId("com.kuaishou.nebula:id/positive"));
                     UiObject uiSignIn = new UiObject(new UiSelector().className("android.view.View").description("立即签到"));
@@ -89,18 +94,16 @@ public class KuaiSJiSutest extends UiAutomatorTestCase {
                     }
 
                 } else {//处理异常情况  1.0 点击重播 2.0 广告滑动一下
-                    UiObject uiReplay = new UiObject(new UiSelector().resourceId("com.kuaishou.nebula:id/replay_ad_video"));
+                    UiObject uiRootT = new UiObject(new UiSelector().resourceId("com.kingroot.kinguser:id/title").text("UiAutomator"));
+                    UiObject uiRootAllow = new UiObject(new UiSelector().resourceId("com.kingroot.kinguser:id/button_right"));
 
+                    if (uiRootT.exists() && uiRootAllow.exists()) {//root 权限获取
+                        uiRootAllow.click();
+                    } else {//最终的强制搞一波
 
-                    if (uiReplay.exists()) {
-                        uiDevice.swipe(400, 1200, 534, 802, 2);
-                    }  else {//最终的强制搞一波
-
-                        baseMethod(uiDevice, 1);
+                        baseMethod(uiDevice, TYPE.Error_Base.ordinal());
                     }
                 }
-
-                Thread.sleep(500);
 
             }
 
@@ -147,7 +150,7 @@ public class KuaiSJiSutest extends UiAutomatorTestCase {
                             .className("android.widget.FrameLayout"));
                     if (appLaunch.exists()) {//没有彻底挂掉
                         appLaunch.click();
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } else {//彻底挂掉了  重启
                         uiDevice.pressHome();
                         Thread.sleep(500);

@@ -24,6 +24,9 @@ public class QuTouTiaotest extends UiAutomatorTestCase {
     /*app 名字*/
     private String appName = "趣头条";
 
+    public enum TYPE {
+        CLEAR_APP, Error_Base,
+    }
 
     private int errorCount = 0;//记录异常强制启动次数  超过10次就关闭应用
 
@@ -42,27 +45,26 @@ public class QuTouTiaotest extends UiAutomatorTestCase {
 
         try {
 
-            baseMethod(uiDevice, 0);//启动时  先关闭其他的
+            baseMethod(uiDevice, TYPE.CLEAR_APP.ordinal());//启动时  先关闭其他的
 
             while (true) {
 
 //                LogUtil.e("我运行了" + (count++));
+                Thread.sleep(1000);
 
-                //主页
+                //首页
                 UiObject uiHome = new UiObject(new UiSelector().resourceId("com.jifen.qukan:id/mh"));
                 //心
                 UiObject uiHeart = new UiObject(new UiSelector().resourceId("com.jifen.qukan:id/qu"));
 
-                if (uiHome.exists()) {//是主页
+                if (uiHome.exists()) {//是首页
 
                     /*阅读奖励*/
-                    UiObject uiReadingAward = new UiObject(new UiSelector().resourceId("com.jifen.qukan:id/aw_"));
-                    UiObject uiTV = new UiObject(new UiSelector().text("小视频").className("android.widget.TextView"));
-                    UiObject uiMission = new UiObject(new UiSelector().text("任务").className("android.widget.TextView"));
-                    UiObject uiMe = new UiObject(new UiSelector().text("我的").className("android.widget.TextView"));
+                    UiObject uiReadingAward = new UiObject(new UiSelector().index(7).className("android.widget.FrameLayout"));
 
-                    if (!uiTV.isSelected()) {//不在播放视频界面
-                        uiTV.click();
+                    if (!uiHeart.exists()) {//不在播放视频界面
+                        UiObject child = uiHome.getChild(new UiSelector().className("android.widget.FrameLayout").index(2));
+                        if (child.exists()) child.click();
                         Thread.sleep(500);
                     } else if (uiReadingAward.exists()) {
                         uiReadingAward.click();
@@ -70,17 +72,11 @@ public class QuTouTiaotest extends UiAutomatorTestCase {
                         Random r = new Random();
                         int number = r.nextInt(100) + 1;
                         /*随机数 进行判断 点击心或者滑动到下一个视频*/
-                        if (number <= 5) {//上滑
+                        if (number <= 10) {//上滑
                             uiDevice.swipe(534, 802, 400, 1200, 2);
-                        } else if (number <= 88) {//下滑
+                        } else if (number <= 95) {//下滑
                             uiDevice.swipe(400, 1200, 534, 802, 2);
                             Thread.sleep(8000);//播放 时长
-                        } else if (number <= 92) {
-                            uiMission.click();
-                            Thread.sleep(500);
-                        } else if (number <= 95) {
-                            uiMe.click();
-                            Thread.sleep(500);
                         } else {//3点击心
                             if (uiHeart.exists()) uiHeart.click();
                         }
@@ -89,17 +85,20 @@ public class QuTouTiaotest extends UiAutomatorTestCase {
                 } else {//处理异常情况  1.0 点击重播 2.0 广告滑动一下
                     UiObject uiClose = new UiObject(new UiSelector().resourceId("com.jifen.qukan:id/a5n"));
 
+                    UiObject uiRootT = new UiObject(new UiSelector().resourceId("com.kingroot.kinguser:id/title").text("UiAutomator"));
+                    UiObject uiRootAllow = new UiObject(new UiSelector().resourceId("com.kingroot.kinguser:id/button_right"));
 
                     if (uiClose.exists()) {
                         uiClose.click();
+                    } else if (uiRootT.exists() && uiRootAllow.exists()) {//root 权限获取
+                        uiRootAllow.click();
                     } else {//最终的强制搞一波
 
-                        baseMethod(uiDevice, 1);
+                        baseMethod(uiDevice, TYPE.Error_Base.ordinal());
 
                     }
                 }
 
-                Thread.sleep(500);
 
             }
 
@@ -146,7 +145,7 @@ public class QuTouTiaotest extends UiAutomatorTestCase {
                             .className("android.widget.FrameLayout"));
                     if (appLaunch.exists()) {//没有彻底挂掉
                         appLaunch.click();
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } else {//彻底挂掉了  重启
                         uiDevice.pressHome();
                         Thread.sleep(500);

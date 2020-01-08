@@ -29,6 +29,9 @@ public class ShuaBaotest extends UiAutomatorTestCase {
     /*app 名字*/
     private String appName = "刷宝短视频";
 
+    public enum TYPE {
+        CLEAR_APP, Error_Base,
+    }
 
     private int errorCount = 0;//记录异常强制启动次数  超过10次就关闭应用
 
@@ -46,12 +49,13 @@ public class ShuaBaotest extends UiAutomatorTestCase {
 
         try {
 
-            baseMethod(uiDevice, 0);//启动时  先关闭其他的
+            baseMethod(uiDevice, TYPE.CLEAR_APP.ordinal());//启动时  先关闭其他的
 
             while (true) {
 
 //                LogUtil.e("我运行了" + (count++));
 
+                Thread.sleep(1000);
 
                 UiObject uiHeart = new UiObject(new UiSelector().resourceId("com.jm.video:id/image_view"));
                 UiObject uiShare = new UiObject(new UiSelector().resourceId("com.jm.video:id/share"));
@@ -85,14 +89,12 @@ public class ShuaBaotest extends UiAutomatorTestCase {
                         uiPrivacy.click();
                     } else {//最终的强制搞一波
 
-                        baseMethod(uiDevice,1);
+                        baseMethod(uiDevice, TYPE.Error_Base.ordinal());
 
 
                     }
 
                 }
-
-                Thread.sleep(500);
 
             }
 
@@ -140,7 +142,7 @@ public class ShuaBaotest extends UiAutomatorTestCase {
                     if (appLaunch.exists()) {//没有彻底挂掉
 
                         appLaunch.click();
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                         uiDevice.swipe(400, 1200, 534, 802, 2);
                         Thread.sleep(500);
 
