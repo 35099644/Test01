@@ -1,10 +1,11 @@
 package testpackage;
 
 import android.app.Instrumentation;
+import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import junit.framework.TestCase;
-
 import java.util.Random;
 
 import com.android.uiautomator.core.UiDevice;
@@ -13,18 +14,16 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
 import com.android.uiautomator.testrunner.UiAutomatorTestCase;
 
-
-
 /**
  * created by xiaozhi
- * <p>彩蛋视频 测试用例
+ * <p>快看点  测试用例
  * Date 2019/12/3
  */
-public class CaiDantest extends UiAutomatorTestCase {
+public class KuaiKanDianNewstest extends UiAutomatorTestCase {
 
 
     /*app 名字*/
-    private String appName = "彩蛋视频";
+    private String appName = "快看点";
 
 
     private int errorCount = 0;//记录异常强制启动次数  超过10次就关闭应用
@@ -44,48 +43,86 @@ public class CaiDantest extends UiAutomatorTestCase {
 
         try {
 
-
             baseMethod(uiDevice, 0);//启动时  先关闭其他的
 
-            //腾讯微视完全要自己特别定制方案 因为需要每次一达到目标就进行点击
             while (true) {
 
 //                LogUtil.e("我运行了" + (count++));
 
-                //首页
-                UiObject uiHome = new UiObject(new UiSelector().resourceId("com.jifen.dandan:id/view_home_top_shadow"));
-                //心
-                UiObject uiHeart = new UiObject(new UiSelector().resourceId("com.jifen.dandan:id/iv_like_icon"));
+                //主页
+                UiObject uiMain = new UiObject(new UiSelector()
+                        .resourceId("com.yuncheapp.android.pearl:id/home_page_tab_bar"));
+                //收藏 分享
+                UiObject uiCollect = new UiObject(new UiSelector().resourceId("com.yuncheapp.android.pearl:id/collect"));
+                UiObject uiShare = new UiObject(new UiSelector().resourceId("com.yuncheapp.android.pearl:id/share"));
 
 
-                if (uiHome.exists()) {//是首页
+                if (uiCollect.exists() && uiShare.exists()) {//查看新闻界面
 
-                    Random r = new Random();
-                    int number = r.nextInt(100) + 1;
-                    /*随机数 进行判断 点击心或者滑动到下一个视频*/
-                    if (number <= 10) {//上滑
-                        uiDevice.swipe(534, 802, 400, 1200, 2);
-                    } else if (number <= 95) {//下滑
-                        uiDevice.swipe(400, 1200, 534, 802, 2);
-                        Thread.sleep(8000);//播放 时长
-                    } else {//3点击心
-                        if (uiHeart.exists()) uiHeart.click();
+                    boolean isRun = true;
+                    //查看新闻
+                    while (isRun) {
+                        UiObject uiWeixin02 = new UiObject(new UiSelector()
+                                .resourceId("com.yuncheapp.android.pearl:id/wechat_wrapper"));//视频
+
+
+                        if (uiWeixin02.exists()) {//视频
+                            Random r = new Random();
+                            int number = r.nextInt(30) + 1;
+                            Thread.sleep((25 + number) * 1000);
+                            uiDevice.pressBack();
+                            isRun = false;
+                            break;
+                        } else {//新闻
+
+                            UiObject uiRecy = new UiObject(
+                                    new UiSelector().resourceId("com.yuncheapp.android.pearl:id/recycler_view"));
+
+                            if (uiRecy.exists()) {
+                                isRun = false;
+                                uiDevice.pressBack();
+                            } else {
+                                uiDevice.swipe(400, 1200, 534, 802, 10);
+                            }
+
+                        }
                     }
 
-                } else {//处理异常情况  1.0 点击重播 2.0 广告滑动一下
-                    UiObject uiDialogClose = new UiObject(new UiSelector().resourceId("com.jifen.dandan:id/iv_close"));
-                    UiObject uiDialogClose02 = new UiObject(new UiSelector().resourceId("com.jifen.dandan:id/close_bottom_button"));
-                    UiObject uiCloseBtn = new UiObject(new UiSelector().resourceId(""));
-                    UiObject uiWebView = new UiObject(new UiSelector().resourceId("com.jifen.dandan:id/q_web_view"));
+                } else if (uiMain.exists()) {//是主页
 
+                    UiObject uiHome = new UiObject(new UiSelector()
+                            .resourceId("com.yuncheapp.android.pearl:id/tab_tv").text("首页"));
+                    UiObject uiTV = new UiObject(new UiSelector()
+                            .resourceId("com.yuncheapp.android.pearl:id/tab_tv").text("小视频"));
+                    UiObject uiMission = new UiObject(new UiSelector()
+                            .resourceId("com.yuncheapp.android.pearl:id/tab_tv").text("任务"));
 
-                    if (uiDialogClose.exists()) {//弹框（邀请好友）
-                        uiDialogClose.click();
-                    } else if (uiDialogClose02.exists()) {
-                        uiDialogClose02.click();
-                    } else if (uiCloseBtn.exists()) {//青少年保护弹框
-                        uiCloseBtn.click();
-                    } else if (uiWebView.exists()) {//个人中心 webView 控件
+                    if (uiHome.exists() && uiHome.isSelected()) {//选中的首页
+                        //item
+                        UiObject uiItem = new UiObject(new UiSelector()
+                                .resourceId("com.yuncheapp.android.pearl:id/title").instance(0));
+
+                        Random r = new Random();
+                        int number = r.nextInt(100) + 1;
+                        if (number <= 2) {//上滑
+                            uiDevice.swipe(534, 802, 400, 1200, 10);
+                        } else if (number <= 95) {//下滑
+                            uiDevice.swipe(400, 1200, 534, 802, 10);
+                        } else {
+                            uiMission.click();//跳转到查看任务
+                            continue;
+                        }
+                        uiItem.click();
+                        Thread.sleep(1000);//要听一下  给一些加载时间
+                    } else {//其他
+                        uiHome.click();
+                    }
+
+                } else {//处理异常情况
+                    //靠点赞按钮判断是不是在播放视频那个整个界面
+                    UiObject uiTV = new UiObject(new UiSelector().resourceId("com.yuncheapp.android.pearl:id/like_icon"));
+
+                    if (uiTV.exists()) {//
                         uiDevice.pressBack();
                     } else {//最终的强制搞一波
 

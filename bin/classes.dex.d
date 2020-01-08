@@ -1,8 +1,11 @@
 F:\eclipse\workspace\Test01\bin\classes.dex : \
+F:\eclipse\workspace\Test01\bin\classes\testpackage\A08WeiLiChangLiaotest.class \
 F:\eclipse\workspace\Test01\bin\classes\testpackage\CaiDantest$TYPE.class \
 F:\eclipse\workspace\Test01\bin\classes\testpackage\CaiDantest.class \
 F:\eclipse\workspace\Test01\bin\classes\testpackage\HuoShanJiSutest$TYPE.class \
 F:\eclipse\workspace\Test01\bin\classes\testpackage\HuoShanJiSutest.class \
+F:\eclipse\workspace\Test01\bin\classes\testpackage\KuaiKanDianNewstest.class \
+F:\eclipse\workspace\Test01\bin\classes\testpackage\KuaiKanDianTVtest.class \
 F:\eclipse\workspace\Test01\bin\classes\testpackage\KuaiSJiSutest$TYPE.class \
 F:\eclipse\workspace\Test01\bin\classes\testpackage\KuaiSJiSutest.class \
 F:\eclipse\workspace\Test01\bin\classes\testpackage\QuTouTiaotest$TYPE.class \
