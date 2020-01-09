@@ -26,10 +26,6 @@ public class WeiShitest extends UiAutomatorTestCase {
     /*app 名字*/
     private String appName = "微视";
 
-    public enum TYPE {
-        CLEAR_APP, Error_Base,
-    }
-
     private int errorCount = 0;//记录异常强制启动次数  超过10次就关闭应用
 
     //    @Test
@@ -43,17 +39,15 @@ public class WeiShitest extends UiAutomatorTestCase {
 
 //        LogUtil.e("我开始运行了");
         int count = 0;
-        int errorCount = 0;//记录异常强制启动次数  超过5次就关闭应用
 
         try {
 
-            baseMethod(uiDevice, TYPE.CLEAR_APP.ordinal());//启动时  先关闭其他的
+            baseMethod(uiDevice, 0);//启动时  先关闭其他的
 
             //腾讯微视完全要自己特别定制方案 因为需要每次一达到目标就进行点击
             while (true) {
 
 //                LogUtil.e("我运行了" + (count++));
-                Thread.sleep(1000);
 
                 //播放按钮
                 UiObject uiPlay = new UiObject(new UiSelector().resourceId("com.tencent.weishi:id/video_player_play_button"));
@@ -99,22 +93,19 @@ public class WeiShitest extends UiAutomatorTestCase {
                     UiObject uiAct = new UiObject(new UiSelector().resourceId("com.tencent.weishi:id/iv_outer_activity_close"));
                     UiObject uiCloseBtn = new UiObject(new UiSelector().resourceId("com.tencent.weishi:id/close_btn"));
 
-                    UiObject uiRootT = new UiObject(new UiSelector().resourceId("com.kingroot.kinguser:id/title").text("UiAutomator"));
-                    UiObject uiRootAllow = new UiObject(new UiSelector().resourceId("com.kingroot.kinguser:id/button_right"));
 
                     if (uiAct.exists()) {//活动
                         uiAct.click();
                     } else if (uiCloseBtn.exists()) {//青少年保护弹框
                         uiCloseBtn.click();
-                    } else if (uiRootT.exists() && uiRootAllow.exists()) {//root 权限获取
-                        uiRootAllow.click();
                     } else {//最终的强制搞一波
 
-                        baseMethod(uiDevice, TYPE.Error_Base.ordinal());
+                        baseMethod(uiDevice, 1);
 
                     }
                 }
 
+                Thread.sleep(500);
 
             }
 
@@ -161,7 +152,7 @@ public class WeiShitest extends UiAutomatorTestCase {
                             .className("android.widget.FrameLayout"));
                     if (appLaunch.exists()) {//没有彻底挂掉
                         appLaunch.click();
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } else {//彻底挂掉了  重启
                         uiDevice.pressHome();
                         Thread.sleep(500);

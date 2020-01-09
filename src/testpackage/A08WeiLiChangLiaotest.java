@@ -40,12 +40,11 @@ public class A08WeiLiChangLiaotest extends UiAutomatorTestCase {
 //        LogUtil.e("我开始运行了");
         int count = 0;
 
-        try {
 
-            baseMethod(uiDevice, 0);//启动时  先关闭其他的
+        baseMethod(uiDevice, 0);//启动时  先关闭其他的
 
-            while (true) {
-
+        while (true) {
+            try {
 //                LogUtil.e("我运行了" + (count++));
 
                 //主页
@@ -64,7 +63,7 @@ public class A08WeiLiChangLiaotest extends UiAutomatorTestCase {
                             uiDevice.swipe(534, 802, 400, 1200, 2);
                         } else if (number <= 92) {//下滑
                             uiDevice.swipe(400, 1200, 534, 802, 2);
-                            Thread.sleep(3500);//播放 时长
+                            Thread.sleep(3000);//播放 时长
                             swipCount++;
                             if (swipCount % 10 == 0) {
                                 UiObject uiTimer = new UiObject(
@@ -106,12 +105,12 @@ public class A08WeiLiChangLiaotest extends UiAutomatorTestCase {
                 }
 
                 Thread.sleep(500);
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+
     }
 
 
